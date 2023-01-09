@@ -32,7 +32,7 @@ exports.register = async (req, res)=>{
         if (isEmpty(confirmPassword)) return res.status(400).json({error: 'Confirm Password is required'});
         if (isPasswordNotSame(password, confirmPassword)) return res.status(400).json({error: "Password doesn't match"});
         // Check user is exits
-        if (await isUserExit(email)) return res.status(400).json({error: 'Email already exits'});
+        if (await isUserExit(email)) return res.status(400).json({emailError: 'Email already exits'});
 
         // if user is not exits than create a user
         const userInfo = {name, email, password, confirmPassword, address};
@@ -81,12 +81,11 @@ exports.emailVerify = async (req, res)=>{
     const currentTime = new Date().getMinutes();
     const expireTime = user.confirmationTokenExpire.getMinutes();
 
-    // Checked whether the user is verified
-    if (user.verified){
+    if(user.verified){
         return res.status(200).json({
             status: 'success',
-            message: 'Email verified successfully'
-        });
+            success: 'Email already verified',
+        })
     }
 
     // Checked whether the request token is equal to the user confirmation Token
@@ -101,7 +100,7 @@ exports.emailVerify = async (req, res)=>{
     if (currentTime >= expireTime){
         return res.status(400).json({
             status: 'fail',
-            error: 'Email verification link expired',
+            error: 'verification link expired',
         })
     }
 
@@ -109,11 +108,17 @@ exports.emailVerify = async (req, res)=>{
         user.verified = true,
         user.confirmationToken = ''
     */
-    await userUpdateAfterVerifyEmailService(email);
-
+    const verifyUser = await userUpdateAfterVerifyEmailService(email);
+    if (verifyUser.verified){
+        return res.status(200).json({
+            status: 'success',
+            success: 'Email already verified'
+        })
+    }
     res.status(200).json({
         status: 'success',
-        message: 'Email verified successfully'
+        success: 'Email verified successfully',
+        verify: verifyUser.verified
     });
 }
 
@@ -121,18 +126,25 @@ exports.emailVerify = async (req, res)=>{
 exports.resendEmail = async (req, res)=>{
     try {
         const email = req.params.email;
-        const user = await isUserExit(email);
-
-        if (email !== user.email){
+        if (isEmailNotValid(email)) {
             return res.status(400).json({
                 status: 'fail',
-                message: 'User not found'
+                error: 'Please provide a valid email'
             });
         }
+
+        const user = await isUserExit(email);
+        if (!user){
+            return res.status(400).json({
+                status: 'fail',
+                error: 'User not found'
+            });
+        }
+
         if (user.verified){
             return res.status(400).json({
                 status: 'fail',
-                message: 'Email already verified'
+                error: 'Email already verified'
             });
         }
 
@@ -151,13 +163,13 @@ exports.resendEmail = async (req, res)=>{
 
         res.status(200).json({
             status: 'success',
-            message: 'Verification link send'
+            success: 'Verification link send'
         });
 
     }catch (err){
         res.status(500).json({
             status: 'fail',
-            error: err
+            error: err.message
         });
     }
 
@@ -172,9 +184,9 @@ exports.login = async (req, res) => {
         if (isEmpty(password)) return res.status(400).json({error: 'Password is required'});
 
         const user = await isUserExit(email);
-        if (!user) return res.status(400).json({error: 'User not found'});
+        if (!user) return res.status(400).json({emailError: 'User not found'});
 
-        if(!comparePassword(password, user.password)) return res.status(400).json({error: 'Password incorrect'});
+        if(!comparePassword(password, user.password)) return res.status(400).json({passwordError: 'Password incorrect'});
 
         if(!user.verified) return res.status(200).json({error: 'Email not verify, please verify your email'});
 

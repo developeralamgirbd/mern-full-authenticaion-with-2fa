@@ -5,7 +5,9 @@ exports.userCreateService = async (userInfo)=>{
 }
 
 exports.userFindByEmailService = async (email)=>{
+
     return User.findOne({email});
+
 }
 
 exports.userUpdateService = async (email, updateData)=>{

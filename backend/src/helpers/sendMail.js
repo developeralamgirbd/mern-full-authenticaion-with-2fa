@@ -1,13 +1,12 @@
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
-// user.email, `Token will expire in ${expireTime} minute`, 'Todo App Account Verify', token, 'email-verify'
 
 exports.sendEmailVerifyMail = async (email, token)=>{
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
-    const verifyUrl = `${process.env.BASE_URL}/email-verify/${email}/${token}`;
+    const verifyUrl = `${process.env.CLIENT_URL}/email-verify/${email}/${token}`;
     const template = `<div style="background: aliceblue; border: 0.5px solid gray; padding: 10px">
         <h4>Please Verify Your email</h4>
         <div style="text-align: center">
