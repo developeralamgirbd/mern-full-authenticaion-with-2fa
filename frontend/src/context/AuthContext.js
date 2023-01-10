@@ -7,12 +7,12 @@ function UserContext({children}) {
 
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState({});
-    const [token, setToken] = useState('ddd');
+    const [token, setToken] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
 
     useEffect(()=> {
         // getUser from localStorage
         const user = getUser();
-        console.log(user)
         if (user){
             setCurrentUser(user);
             setToken(getToken());
@@ -22,7 +22,7 @@ function UserContext({children}) {
 
     }, [])
     const values = {
-        currentUser, token, loading,
+        currentUser, token, loading, successMsg, setSuccessMsg
     }
 
     return (

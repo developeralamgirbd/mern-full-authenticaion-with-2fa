@@ -29,7 +29,7 @@ exports.sendPasswordResetLinkMail = async (email, token)=>{
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    const verifyUrl = `${process.env.BASE_URL}/reset-password/${email}/${token}`;
+    const verifyUrl = `${process.env.CLIENT_URL}/new-password/${email}/${token}`;
     const template = `<div style="background: aliceblue; border: 0.5px solid gray; padding: 10px">
         <h4>Password Reset</h4>
         <div style="text-align: center">

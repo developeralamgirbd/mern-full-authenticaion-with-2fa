@@ -298,14 +298,12 @@ exports.resetPassword = async (req, res)=>{
     try {
         const {email} = req.body;
 
-
-
         const user = await isUserExit(email);
 
         if (!user){
             return res.status(400).json({
                 status: 'fail',
-                error: 'User not found'
+                emailError: 'User not found'
             })
         }
 
@@ -357,6 +355,7 @@ exports.resetPasswordResponse = async (req, res)=>{
 exports.newPasswordCreate = async (req, res)=>{
     try {
         const {email, token, password, confirmPassword} = req.body;
+
         const user = await isUserExit(email)
 
         if (!user){
@@ -366,9 +365,9 @@ exports.newPasswordCreate = async (req, res)=>{
             });
         }
 
-        if (isPasswordNotValid(password)) return res.status(400).json({ error: "Password must be 8 character and contain at least one uppercase, one lowercase, one number and one special character"});
+        if (isPasswordNotValid(password)) return res.status(400).json({ passwordError: "Password must be 8 character and contain at least one uppercase, one lowercase, one number and one special character"});
 
-        if (isPasswordNotSame(password, confirmPassword)) return res.status(400).json({ error: "Password doesn't match"});
+        if (isPasswordNotSame(password, confirmPassword)) return res.status(400).json({ passwordError: "Password doesn't match"});
 
         if (token !== user.passwordResetToken) return res.status(400).json({ error: 'Invalid token'});
 
@@ -384,7 +383,7 @@ exports.newPasswordCreate = async (req, res)=>{
 
         res.status(200).json({
             status: 'success',
-            message: 'Password changed successfully'
+            message: 'Password Reset successfully'
         });
 
     }catch (error) {

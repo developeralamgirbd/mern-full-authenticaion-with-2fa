@@ -35,11 +35,37 @@ export const resendEmailApi = async (email)=>{
     }
 }
 
-export const emailVerifyApi = async (email, token)=>{
+/*export const emailVerifyApi = async (email, token)=>{
     try {
         return await axios.get(`${baseUrl}/email-verify/${email}/${token}`);
     }catch (error) {
         return error.response
     }
+}*/
+
+export const resetLinkSend= async (data)=>{
+    try {
+        return await axios.post(`${baseUrl}/reset-password`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }catch (error) {
+        return error.response
+    }
 }
+
+export const resetPassword = async (data)=>{
+    try {
+        return await axios.patch(`${baseUrl}/password`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }catch (error) {
+        return error.response
+    }
+}
+
+
 

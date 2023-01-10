@@ -8,6 +8,8 @@ import EmailSendMsgPage from "../pages/EmailSendMsgPage";
 import EmailVerifyPage from "../pages/EmailVerifyPage";
 import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import NewPasswordPage from "../pages/NewPasswordPage";
 
 const routes = createBrowserRouter([
     {
@@ -25,6 +27,14 @@ const routes = createBrowserRouter([
             {
                 path: '/login',
                 element: <ProtectedRoute><Login/></ProtectedRoute>
+            },
+            {
+                path: '/forgot-password',
+                element: <ProtectedRoute><ForgotPasswordPage/></ProtectedRoute>
+            },
+            {
+                path: '/new-password/:email/:token',
+                element: <ProtectedRoute><NewPasswordPage/></ProtectedRoute>
             },
             {
                 path: '/dashboard',
